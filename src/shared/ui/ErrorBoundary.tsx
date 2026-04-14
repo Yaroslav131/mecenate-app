@@ -2,7 +2,7 @@ import { Component, type ReactNode } from 'react';
 import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { IllustrationSticker } from '@/shared/ui/IllustrationSticker';
 import { stateStyles } from '@/shared/ui/stateStyles';
-import { colors } from '@/shared/theme';
+import { activeOpacity, colors } from '@/shared/theme';
 
 interface Props {
   children: ReactNode;
@@ -36,7 +36,7 @@ export class ErrorBoundary extends Component<Props, State> {
           <TouchableOpacity
             style={stateStyles.button}
             onPress={this.handleRetry}
-            activeOpacity={0.5}
+            activeOpacity={activeOpacity}
             disabled={this.state.isRetrying}
           >
             {this.state.isRetrying ? (

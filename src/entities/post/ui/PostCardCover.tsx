@@ -1,6 +1,6 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { DonateIcon } from '@/shared/ui/icons/PostActionIcons';
-import { colors, fonts, fontSize, lineHeight, spacing } from '@/shared/theme';
+import { activeOpacity, colors, fonts, fontSize, lineHeight, spacing } from '@/shared/theme';
 
 interface PostCardCoverProps {
   coverUrl: string;
@@ -24,7 +24,7 @@ export function PostCardCover({ coverUrl, isLocked }: PostCardCoverProps) {
           <Text style={styles.paidText}>
             Контент скрыт пользователем.{'\n'}Доступ откроется после доната
           </Text>
-          <TouchableOpacity style={styles.paidDonateBtn} activeOpacity={0.5}>
+          <TouchableOpacity style={styles.paidDonateBtn} activeOpacity={activeOpacity}>
             <Text style={styles.paidDonateBtnText}>Отправить донат</Text>
           </TouchableOpacity>
         </View>

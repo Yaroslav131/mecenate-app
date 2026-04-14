@@ -13,12 +13,18 @@ export const colors = {
     comment: '#111416',
     commentsCount: '#68727D',
   },
+  icon: {
+    default: '#57626F',
+  },
   like: '#FF2B75',
+  likeBackground: '#FFEAF1',
   overlay: 'rgba(17, 20, 22, 0.45)',
   inputBorder: '#EFF2F7',
   inputPlaceholder: '#A4AAB0',
   surfaceTransparent: 'rgba(255,255,255,0)',
 } as const;
+
+export const activeOpacity = 0.5;
 
 export const fonts = {
   regular: 'Manrope_400Regular',

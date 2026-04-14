@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { LayoutChangeEvent, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Animated, { Easing, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
-import { colors, fonts, fontSize, lineHeight, radius, shadows, spacing } from '@/shared/theme';
+import { activeOpacity, colors, fonts, fontSize, lineHeight, radius, shadows, spacing } from '@/shared/theme';
 import type { PostTier } from '@/shared/types';
 
 type FilterTab = { label: string; value: PostTier | undefined };
@@ -66,7 +66,7 @@ export function TabFilter({ active, onChange }: TabFilterProps) {
             key={tab.label}
             style={styles.tab}
             onPress={() => onChange(tab.value)}
-            activeOpacity={0.5}
+            activeOpacity={activeOpacity}
           >
             <Text style={[styles.label, isActive && styles.labelActive]}>{tab.label}</Text>
           </TouchableOpacity>

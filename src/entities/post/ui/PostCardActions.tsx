@@ -1,7 +1,7 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { LikePill } from '@/entities/post/ui/LikePill';
 import { CommentIcon } from '@/shared/ui/icons/PostActionIcons';
-import { colors, fonts, fontSize, lineHeight, radius, spacing } from '@/shared/theme';
+import { activeOpacity, colors, fonts, fontSize, lineHeight, radius, spacing } from '@/shared/theme';
 
 interface PostCardActionsProps {
   likesCount: number;
@@ -32,7 +32,7 @@ export function PostCardActions({
       <TouchableOpacity
         style={styles.actionPill}
         onPress={handleCommentsPress}
-        activeOpacity={0.5}
+        activeOpacity={activeOpacity}
       >
         <View style={styles.iconWrap}>
           <CommentIcon />

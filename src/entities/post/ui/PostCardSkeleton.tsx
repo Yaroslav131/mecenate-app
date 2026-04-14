@@ -18,11 +18,7 @@ function SkeletonBox({ width, height, style }: { width?: number | string; height
 
   return (
     <Animated.View
-      style={[
-        { width: width ?? '100%', height, borderRadius: radius.md, backgroundColor: colors.skeleton },
-        { opacity },
-        style,
-      ]}
+      style={[styles.box, { width: width ?? '100%', height }, { opacity }, style]}
     />
   );
 }
@@ -48,6 +44,10 @@ export function PostCardSkeleton() {
 }
 
 const styles = StyleSheet.create({
+  box: {
+    borderRadius: radius.md,
+    backgroundColor: colors.skeleton,
+  },
   card: {
     backgroundColor: colors.surface,
     borderRadius: radius.lg,

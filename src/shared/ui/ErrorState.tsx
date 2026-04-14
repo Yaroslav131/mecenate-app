@@ -1,7 +1,7 @@
 import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native';
 import { IllustrationSticker } from '@/shared/ui/IllustrationSticker';
 import { stateStyles as styles } from '@/shared/ui/stateStyles';
-import { colors } from '@/shared/theme';
+import { activeOpacity, colors } from '@/shared/theme';
 
 interface ErrorStateProps {
   title?: string;
@@ -26,7 +26,7 @@ export function ErrorState({
         <TouchableOpacity
           style={styles.button}
           onPress={onPress}
-          activeOpacity={0.5}
+          activeOpacity={activeOpacity}
           disabled={isLoading}
         >
           {isLoading ? (

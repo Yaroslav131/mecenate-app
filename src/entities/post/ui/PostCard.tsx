@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { PostCardActions } from '@/entities/post/ui/PostCardActions';
 import { PostCardCover } from '@/entities/post/ui/PostCardCover';
-import { colors, fonts, fontSize, lineHeight, radius, shadows, spacing } from '@/shared/theme';
+import { activeOpacity, colors, fonts, fontSize, lineHeight, radius, shadows, spacing } from '@/shared/theme';
 import type { Post } from '@/shared/types';
 
 interface PostCardProps {
@@ -50,7 +50,7 @@ export function PostCard({
     <>
       <View style={styles.authorRow}>
         {onBack && (
-          <TouchableOpacity onPress={onBack} activeOpacity={0.5} style={styles.backButton}>
+          <TouchableOpacity onPress={onBack} activeOpacity={activeOpacity} style={styles.backButton}>
             <Text style={styles.backIcon}>‹</Text>
           </TouchableOpacity>
         )}
@@ -83,7 +83,7 @@ export function PostCard({
                 <TouchableOpacity
                   style={styles.showMoreBtn}
                   onPress={handleShowMore}
-                  activeOpacity={0.5}
+                  activeOpacity={activeOpacity}
                 >
                   <LinearGradient
                     colors={[colors.surfaceTransparent, colors.surface]}
@@ -166,8 +166,8 @@ const styles = StyleSheet.create({
   },
   authorName: {
     fontFamily: fonts.bold,
-    fontSize: 15,
-    lineHeight: 20,
+    fontSize: fontSize.md,
+    lineHeight: lineHeight.md,
     color: colors.text.primary,
   },
   content: {

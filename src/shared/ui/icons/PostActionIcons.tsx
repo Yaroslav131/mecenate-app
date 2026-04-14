@@ -1,6 +1,7 @@
 import Svg, { Path } from 'react-native-svg';
+import { colors } from '@/shared/theme';
 
-export function LikeInactiveIcon({ color = '#57626F' }: { color?: string } = {}) {
+export function LikeInactiveIcon({ color = colors.icon.default }: { color?: string } = {}) {
   return (
     <Svg width={24} height={24} viewBox="0 0 24 24" fill="none">
       <Path
@@ -11,7 +12,7 @@ export function LikeInactiveIcon({ color = '#57626F' }: { color?: string } = {})
   );
 }
 
-export function LikeActiveIcon({ color = '#FFEAF1' }: { color?: string } = {}) {
+export function LikeActiveIcon({ color = colors.likeBackground }: { color?: string } = {}) {
   return (
     <Svg width={24} height={24} viewBox="0 0 24 24" fill="none">
       <Path
@@ -22,7 +23,7 @@ export function LikeActiveIcon({ color = '#FFEAF1' }: { color?: string } = {}) {
   );
 }
 
-export function DonateIcon({ size = 24, color = '#FFFFFF' }: { size?: number; color?: string }) {
+export function DonateIcon({ size = 24, color = colors.text.inverse }: { size?: number; color?: string }) {
   return (
     <Svg width={size} height={size} viewBox="0 0 30 30" fill="none">
       <Path
@@ -40,7 +41,18 @@ export function CommentIcon() {
     <Svg width={24} height={24} viewBox="0 0 24 24" fill="none">
       <Path
         d="M19.5 11.5312C19.5 14.8975 16.1426 17.625 12 17.625C10.9131 17.625 9.88185 17.4375 8.95021 17.1006C8.60158 17.3555 8.03322 17.7041 7.35939 17.9971C6.65626 18.3018 5.80958 18.5625 4.96876 18.5625C4.77833 18.5625 4.60841 18.4482 4.53517 18.2725C4.46193 18.0967 4.50294 17.8975 4.63478 17.7627L4.64357 17.7539C4.65236 17.7451 4.66408 17.7334 4.68165 17.7129C4.71388 17.6777 4.76369 17.6221 4.82521 17.5459C4.94533 17.3994 5.10646 17.1826 5.27052 16.9131C5.56349 16.4268 5.84181 15.7881 5.89748 15.0703C5.01857 14.0742 4.50001 12.8525 4.50001 11.5312C4.50001 8.16504 7.85744 5.4375 12 5.4375C16.1426 5.4375 19.5 8.16504 19.5 11.5312Z"
-        fill="#57626F"
+        fill={colors.icon.default}
+      />
+    </Svg>
+  );
+}
+
+export function SendIcon() {
+  return (
+    <Svg width={30} height={30} viewBox="0 0 30 30" fill="none">
+      <Path
+        d="M7.45244 6.64289C6.17802 6.08991 4.92192 7.45954 5.5811 8.68269L8.11894 13.3958C8.28007 13.6998 8.58037 13.9012 8.92094 13.9451L15.3663 14.7508C15.4908 14.7654 15.586 14.8716 15.586 14.9962C15.586 15.1207 15.4908 15.2269 15.3663 15.2415L8.92094 16.0472C8.58037 16.0911 8.28007 16.2962 8.11894 16.5965L5.5811 21.317C4.92192 22.5401 6.17802 23.9097 7.45244 23.3568L23.6353 16.3438C24.8108 15.8348 24.8108 14.1649 23.6353 13.6558L7.45244 6.64289Z"
+        fill={colors.primary}
       />
     </Svg>
   );
