@@ -1,15 +1,8 @@
-import * as Haptics from 'expo-haptics';
 import { useState } from 'react';
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
-import Animated, {
-  cancelAnimation,
-  useAnimatedStyle,
-  useSharedValue,
-  withSequence,
-  withSpring,
-  withTiming,
-} from 'react-native-reanimated';
+import Animated from 'react-native-reanimated';
 import { useCountAnimation } from '@/shared/lib/useCountAnimation';
+import { useIconLikeAnimation } from '@/shared/lib/useIconLikeAnimation';
 import { LikeActiveIcon, LikeInactiveIcon } from '@/shared/ui/icons/PostActionIcons';
 import { colors, fonts, fontSize, lineHeight, radius, spacing } from '@/shared/theme';
 import type { Comment } from '@/shared/types';
@@ -24,27 +17,12 @@ export function CommentItem({ comment }: CommentItemProps) {
   const [isLiked, setIsLiked] = useState(initialIsLiked);
   const [count, setCount] = useState(initialLikesCount);
   const { shownCount, nextCount, outStyle, inStyle } = useCountAnimation(count);
-
-  const iconScale = useSharedValue(1);
-
-  const iconAnimStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: iconScale.value }],
-  }));
+  const { iconAnimStyle, triggerAnimation } = useIconLikeAnimation(isLiked);
 
   const handleLike = () => {
-    const newLiked = !isLiked;
-    setIsLiked(newLiked);
-    setCount((prev) => (newLiked ? prev + 1 : prev - 1));
-
-    cancelAnimation(iconScale);
-    iconScale.value = withSequence(
-      withTiming(1.4, { duration: 80 }),
-      withSpring(1, { damping: 12, stiffness: 220 }),
-    );
-
-    Haptics.impactAsync(
-      isLiked ? Haptics.ImpactFeedbackStyle.Light : Haptics.ImpactFeedbackStyle.Medium,
-    );
+    setIsLiked((prev) => !prev);
+    setCount((prev) => (isLiked ? prev - 1 : prev + 1));
+    triggerAnimation();
   };
 
   return (

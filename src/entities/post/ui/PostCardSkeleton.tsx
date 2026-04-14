@@ -37,7 +37,7 @@ export function PostCardSkeleton() {
       <SkeletonBox width="100%" height={200} style={styles.image} />
       <View style={styles.content}>
         <SkeletonBox width="60%" height={16} />
-        <SkeletonBox width="100%" height={12} style={{ marginTop: spacing.xs }} />
+        <SkeletonBox width="100%" height={12} style={styles.bodyLine} />
         <View style={styles.actionsRow}>
           <SkeletonBox width={60} height={28} style={styles.pill} />
           <SkeletonBox width={60} height={28} style={styles.pill} />
@@ -78,5 +78,8 @@ const styles = StyleSheet.create({
   },
   pill: {
     borderRadius: radius.full,
+  },
+  bodyLine: {
+    marginTop: spacing.xs,
   },
 });

@@ -1,4 +1,3 @@
-import * as Haptics from 'expo-haptics';
 import { Pressable, StyleSheet, View } from 'react-native';
 import Animated, {
   cancelAnimation,
@@ -9,6 +8,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import { useCountAnimation } from '@/shared/lib/useCountAnimation';
+import { useIconLikeAnimation } from '@/shared/lib/useIconLikeAnimation';
 import { LikeActiveIcon, LikeInactiveIcon } from '@/shared/ui/icons/PostActionIcons';
 import { colors, fonts, fontSize, lineHeight, radius, spacing } from '@/shared/theme';
 
@@ -20,15 +20,11 @@ interface LikePillProps {
 
 export function LikePill({ isLiked, likesCount, onPress }: LikePillProps) {
   const pillScale = useSharedValue(1);
-  const iconScale = useSharedValue(1);
+  const { iconAnimStyle, triggerAnimation } = useIconLikeAnimation(isLiked);
   const { shownCount, nextCount, outStyle, inStyle } = useCountAnimation(likesCount);
 
   const pillAnimStyle = useAnimatedStyle(() => ({
     transform: [{ scale: pillScale.value }],
-  }));
-
-  const iconAnimStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: iconScale.value }],
   }));
 
   const handlePress = (e: { stopPropagation: () => void }) => {
@@ -40,16 +36,7 @@ export function LikePill({ isLiked, likesCount, onPress }: LikePillProps) {
       withSpring(1, { damping: 12, stiffness: 220 }),
     );
 
-    cancelAnimation(iconScale);
-    iconScale.value = withSequence(
-      withTiming(1.4, { duration: 80 }),
-      withSpring(1, { damping: 12, stiffness: 220 }),
-    );
-
-    Haptics.impactAsync(
-      isLiked ? Haptics.ImpactFeedbackStyle.Light : Haptics.ImpactFeedbackStyle.Medium,
-    );
-
+    triggerAnimation();
     onPress();
   };
 

@@ -9,7 +9,7 @@ interface PostCardCoverProps {
 
 export function PostCardCover({ coverUrl, isLocked }: PostCardCoverProps) {
   return (
-    <View style={styles.coverWrap}>
+    <View>
       <Image
         source={{ uri: coverUrl }}
         style={styles.cover}
@@ -34,7 +34,6 @@ export function PostCardCover({ coverUrl, isLocked }: PostCardCoverProps) {
 }
 
 const styles = StyleSheet.create({
-  coverWrap: {},
   cover: {
     width: '100%',
     aspectRatio: 1,

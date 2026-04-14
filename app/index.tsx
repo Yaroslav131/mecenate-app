@@ -26,6 +26,11 @@ export default function FeedScreen() {
 
   const posts = data?.pages.flatMap((p) => p.data.posts) ?? [];
 
+  const handlePostPress = (id: string) => router.push(`/post/${id}`);
+  const handleEndReached = () => {
+    if (hasNextPage && !isFetchingNextPage) fetchNextPage();
+  };
+
   return (
     <View style={[styles.screen, { paddingTop: insets.top }]}>
       <TabFilter active={tier} onChange={setTier} />
@@ -36,7 +41,7 @@ export default function FeedScreen() {
           ))}
         </>
       ) : isError ? (
-        <ErrorState onPress={() => refetch()} isLoading={isRefetching} buttonLabel="Повторить" />
+        <ErrorState onPress={refetch} isLoading={isRefetching} buttonLabel="Повторить" />
       ) : (
         <FlatList<Post>
           data={posts}
@@ -44,8 +49,8 @@ export default function FeedScreen() {
           renderItem={({ item }) => (
             <PostCardItem
               post={item}
-              onPress={() => router.push(`/post/${item.id}`)}
-              onCommentsPress={() => router.push(`/post/${item.id}`)}
+              onPress={() => handlePostPress(item.id)}
+              onCommentsPress={() => handlePostPress(item.id)}
             />
           )}
           ListEmptyComponent={<EmptyState title="По вашему запросу ничего не найдено" />}
@@ -55,11 +60,9 @@ export default function FeedScreen() {
             ) : null
           }
           refreshControl={
-            <RefreshControl refreshing={false} onRefresh={() => refetch()} tintColor={colors.primary} />
+            <RefreshControl refreshing={false} onRefresh={refetch} tintColor={colors.primary} />
           }
-          onEndReached={() => {
-            if (hasNextPage && !isFetchingNextPage) fetchNextPage();
-          }}
+          onEndReached={handleEndReached}
           onEndReachedThreshold={0.4}
           contentContainerStyle={styles.listContent}
           showsVerticalScrollIndicator={false}

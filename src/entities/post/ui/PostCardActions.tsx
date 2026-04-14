@@ -18,13 +18,20 @@ export function PostCardActions({
   onLike,
   onCommentsPress,
 }: PostCardActionsProps) {
+  const handleLike = onLike ?? (() => {});
+
+  const handleCommentsPress = (e: { stopPropagation: () => void }) => {
+    e.stopPropagation();
+    onCommentsPress?.();
+  };
+
   return (
     <View style={styles.actionsRow}>
-      <LikePill isLiked={isLiked} likesCount={likesCount} onPress={onLike ?? (() => {})} />
+      <LikePill isLiked={isLiked} likesCount={likesCount} onPress={handleLike} />
 
       <TouchableOpacity
         style={styles.actionPill}
-        onPress={(e) => { e.stopPropagation(); onCommentsPress?.(); }}
+        onPress={handleCommentsPress}
         activeOpacity={0.5}
       >
         <View style={styles.iconWrap}>

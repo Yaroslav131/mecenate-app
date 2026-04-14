@@ -1,7 +1,8 @@
 import { Component, type ReactNode } from 'react';
 import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { IllustrationSticker } from '@/shared/ui/IllustrationSticker';
-import { colors, fonts, fontSize, lineHeight, spacing } from '@/shared/theme';
+import { stateStyles } from '@/shared/ui/stateStyles';
+import { colors } from '@/shared/theme';
 
 interface Props {
   children: ReactNode;
@@ -28,12 +29,12 @@ export class ErrorBoundary extends Component<Props, State> {
     if (this.state.hasError) {
       return (
         <View style={styles.container}>
-          <View style={styles.illustration}>
+          <View style={stateStyles.illustration}>
             <IllustrationSticker />
           </View>
-          <Text style={styles.title}>Что-то пошло не так</Text>
+          <Text style={stateStyles.title}>Что-то пошло не так</Text>
           <TouchableOpacity
-            style={styles.button}
+            style={stateStyles.button}
             onPress={this.handleRetry}
             activeOpacity={0.5}
             disabled={this.state.isRetrying}
@@ -41,7 +42,7 @@ export class ErrorBoundary extends Component<Props, State> {
             {this.state.isRetrying ? (
               <ActivityIndicator color={colors.text.inverse} />
             ) : (
-              <Text style={styles.buttonLabel}>Повторить</Text>
+              <Text style={stateStyles.buttonLabel}>Повторить</Text>
             )}
           </TouchableOpacity>
         </View>
@@ -53,39 +54,7 @@ export class ErrorBoundary extends Component<Props, State> {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    ...stateStyles.container,
     backgroundColor: colors.background,
-    paddingHorizontal: spacing['2xl'],
-  },
-  illustration: {
-    marginBottom: spacing['3xl'],
-  },
-  title: {
-    fontFamily: fonts.bold,
-    fontSize: fontSize.title,
-    lineHeight: lineHeight.lg,
-    color: colors.text.primary,
-    textAlign: 'center',
-    fontVariant: ['lining-nums', 'tabular-nums'],
-    marginBottom: spacing.lg,
-  },
-  button: {
-    width: 361,
-    height: 42,
-    backgroundColor: colors.actionButton,
-    borderRadius: 14,
-    paddingVertical: spacing.lg,
-    paddingHorizontal: spacing['3xl'],
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  buttonLabel: {
-    fontFamily: fonts.semibold,
-    fontSize: fontSize.md,
-    lineHeight: lineHeight.md,
-    color: colors.text.inverse,
-    fontVariant: ['lining-nums', 'tabular-nums'],
   },
 });

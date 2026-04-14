@@ -1,7 +1,6 @@
 import { router, useLocalSearchParams } from 'expo-router';
-import { useQueryClient } from '@tanstack/react-query';
 import { observer } from 'mobx-react-lite';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -14,22 +13,80 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { toggleLike } from '@/entities/post/api';
 import { usePost } from '@/entities/post/model/usePost';
+import { usePostRealtime } from '@/entities/post/model/usePostRealtime';
 import { postStore } from '@/entities/post/model/store';
 import { PostCard } from '@/entities/post/ui/PostCard';
 import { useComments } from '@/entities/comment/model/useComments';
 import { CommentItem } from '@/entities/comment/ui/CommentItem';
+import { useToggleLike } from '@/features/like-post/model/useToggleLike';
 import { CommentInput } from '@/features/send-comment/ui/CommentInput';
 import { useSendComment } from '@/features/send-comment/model/useSendComment';
 import { ErrorState } from '@/shared/ui/ErrorState';
-import { wsService } from '@/shared/lib/websocket';
 import { colors, fonts, fontSize, fontWeight, lineHeight, radius, spacing } from '@/shared/theme';
-import type { Comment, WsEvent } from '@/shared/types';
+import type { Comment, Post } from '@/shared/types';
+
+interface PostDetailHeaderProps {
+  post: Post;
+  likesCount: number;
+  isLiked: boolean;
+  commentsTotal: number;
+  onLike: () => void;
+  onBack: () => void;
+}
+
+function PostDetailHeader({ post, likesCount, isLiked, commentsTotal, onLike, onBack }: PostDetailHeaderProps) {
+  return (
+    <>
+      <PostCard
+        post={post}
+        likesCount={likesCount}
+        isLiked={isLiked}
+        onLike={onLike}
+        commentsCount={commentsTotal}
+        onBack={onBack}
+      />
+      <View style={styles.commentsHeader}>
+        <Text style={styles.commentsCountLabel}>
+          {commentsTotal} комментари{commentsTotal === 1 ? 'й' : 'я'}
+        </Text>
+        <Text style={styles.sortLabel}>Сначала новые</Text>
+      </View>
+    </>
+  );
+}
+
+interface CommentsFooterProps {
+  isLoading: boolean;
+  hasNextPage: boolean;
+  isFetchingNextPage: boolean;
+  onLoadMore: () => void;
+}
+
+function CommentsFooter({ isLoading, hasNextPage, isFetchingNextPage, onLoadMore }: CommentsFooterProps) {
+  return (
+    <>
+      {isLoading && (
+        <ActivityIndicator color={colors.primary} style={styles.footerLoader} />
+      )}
+      {hasNextPage && !isLoading && (
+        <TouchableOpacity
+          style={styles.loadMoreBtn}
+          onPress={onLoadMore}
+          disabled={isFetchingNextPage}
+        >
+          <Text style={styles.loadMoreText}>
+            {isFetchingNextPage ? 'Загрузка...' : 'Загрузить ещё'}
+          </Text>
+        </TouchableOpacity>
+      )}
+      <View style={styles.listFooterSpacer} />
+    </>
+  );
+}
 
 const PostDetailScreen = observer(() => {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const queryClient = useQueryClient();
   const insets = useSafeAreaInsets();
   const [commentText, setCommentText] = useState('');
 
@@ -42,9 +99,17 @@ const PostDetailScreen = observer(() => {
     isFetchingNextPage,
   } = useComments(id);
 
+  const post = postData?.data.post;
+  const { isLiked, likesCount, handleLike } = useToggleLike(
+    id,
+    post?.isLiked ?? false,
+    post?.likesCount ?? 0,
+  );
+
+  usePostRealtime(id);
+
   const { isSending, send } = useSendComment(id);
 
-  const post = postData?.data.post;
   const allFetchedComments = commentsData?.pages.flatMap((p) => p.data.comments) ?? [];
   const realtimeComments = postStore.getRealtimeComments(id);
 
@@ -54,39 +119,6 @@ const PostDetailScreen = observer(() => {
   );
   const newRealtimeComments = realtimeComments.filter((c) => !fetchedIds.has(c.id));
   const allComments: Comment[] = [...newRealtimeComments, ...allFetchedComments];
-
-  const liveState = postStore.getLiveState(id);
-  const likesCount = liveState?.likesCount ?? post?.likesCount ?? 0;
-  const isLiked = liveState?.isLiked ?? post?.isLiked ?? false;
-
-  useEffect(() => {
-    wsService.connect();
-    const unsub = wsService.subscribe((event: WsEvent) => {
-      if (event.type === 'like_updated' && event.postId === id) {
-        postStore.updateLikesCount(id, event.likesCount);
-      }
-      if (event.type === 'comment_added' && event.postId === id) {
-        postStore.prependComment(id, event.comment);
-      }
-    });
-    return () => {
-      unsub();
-      wsService.disconnect();
-      postStore.clearRealtimeComments(id);
-      queryClient.invalidateQueries({ queryKey: ['posts'] });
-    };
-  }, [id]);
-
-  const handleLike = async () => {
-    if (!post) return;
-    postStore.setLiked(id, !isLiked, isLiked ? likesCount - 1 : likesCount + 1);
-    try {
-      const res = await toggleLike(id);
-      postStore.setLiked(id, res.data.isLiked, res.data.likesCount);
-    } catch {
-      postStore.setLiked(id, isLiked, likesCount);
-    }
-  };
 
   const handleSendComment = async () => {
     const success = await send(commentText);
@@ -128,41 +160,22 @@ const PostDetailScreen = observer(() => {
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => <CommentItem comment={item} />}
           ListHeaderComponent={
-            <>
-              <PostCard
-                post={post}
-                likesCount={likesCount}
-                isLiked={isLiked}
-                onLike={handleLike}
-                commentsCount={commentsTotal}
-                onBack={() => router.back()}
-              />
-              <View style={styles.commentsHeader}>
-                <Text style={styles.commentsCountLabel}>
-                  {commentsTotal} комментари{commentsTotal === 1 ? 'й' : 'я'}
-                </Text>
-                <Text style={styles.sortLabel}>Сначала новые</Text>
-              </View>
-            </>
+            <PostDetailHeader
+              post={post}
+              likesCount={likesCount}
+              isLiked={isLiked}
+              commentsTotal={commentsTotal}
+              onLike={handleLike}
+              onBack={() => router.back()}
+            />
           }
           ListFooterComponent={
-            <>
-              {commentsLoading && (
-                <ActivityIndicator color={colors.primary} style={{ marginVertical: spacing.lg }} />
-              )}
-              {hasNextPage && !commentsLoading && (
-                <TouchableOpacity
-                  style={styles.loadMoreBtn}
-                  onPress={() => fetchNextPage()}
-                  disabled={isFetchingNextPage}
-                >
-                  <Text style={styles.loadMoreText}>
-                    {isFetchingNextPage ? 'Загрузка...' : 'Загрузить ещё'}
-                  </Text>
-                </TouchableOpacity>
-              )}
-              <View style={{ height: spacing.lg }} />
-            </>
+            <CommentsFooter
+              isLoading={commentsLoading}
+              hasNextPage={!!hasNextPage}
+              isFetchingNextPage={isFetchingNextPage}
+              onLoadMore={fetchNextPage}
+            />
           }
           showsVerticalScrollIndicator={false}
         />
@@ -239,5 +252,11 @@ const styles = StyleSheet.create({
     fontSize: fontSize.sm,
     color: colors.primary,
     fontWeight: fontWeight.medium,
+  },
+  footerLoader: {
+    marginVertical: spacing.lg,
+  },
+  listFooterSpacer: {
+    height: spacing.lg,
   },
 });

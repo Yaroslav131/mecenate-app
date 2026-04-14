@@ -8,7 +8,7 @@ import {
 } from '@expo-google-fonts/manrope';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { View, ActivityIndicator } from 'react-native';
+import { StyleSheet, View, ActivityIndicator } from 'react-native';
 import { ErrorBoundary } from '@/shared/ui/ErrorBoundary';
 
 const queryClient = new QueryClient({
@@ -17,6 +17,14 @@ const queryClient = new QueryClient({
       retry: 2,
       staleTime: 30_000,
     },
+  },
+});
+
+const styles = StyleSheet.create({
+  loading: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 
@@ -30,7 +38,7 @@ export default function RootLayout() {
 
   if (!fontsLoaded) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <View style={styles.loading}>
         <ActivityIndicator />
       </View>
     );

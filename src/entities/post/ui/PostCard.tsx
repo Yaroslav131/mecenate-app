@@ -37,6 +37,15 @@ export function PostCard({
   const [expanded, setExpanded] = useState(false);
   const [isTruncated, setIsTruncated] = useState(false);
 
+  const handleShowMore = (e: { stopPropagation: () => void }) => {
+    e.stopPropagation();
+    setExpanded(true);
+  };
+
+  const handleTextLayout = (e: { nativeEvent: { lines: unknown[] } }) => {
+    if (!expanded) setIsTruncated(e.nativeEvent.lines.length >= 2);
+  };
+
   const inner = (
     <>
       <View style={styles.authorRow}>
@@ -66,27 +75,18 @@ export function PostCard({
               <Text
                 style={styles.body}
                 numberOfLines={isDetailView || expanded ? undefined : 2}
-                onTextLayout={
-                  isDetailView
-                    ? undefined
-                    : (e) => {
-                        if (!expanded) setIsTruncated(e.nativeEvent.lines.length >= 2);
-                      }
-                }
+                onTextLayout={isDetailView ? undefined : handleTextLayout}
               >
                 {body}
               </Text>
               {!isDetailView && !expanded && isTruncated && (
                 <TouchableOpacity
                   style={styles.showMoreBtn}
-                  onPress={(e) => {
-                    e.stopPropagation();
-                    setExpanded(true);
-                  }}
+                  onPress={handleShowMore}
                   activeOpacity={0.5}
                 >
                   <LinearGradient
-                    colors={['rgba(255,255,255,0)', colors.surface]}
+                    colors={[colors.surfaceTransparent, colors.surface]}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 0 }}
                     style={styles.fadeGradient}
@@ -176,6 +176,7 @@ const styles = StyleSheet.create({
   },
   lockedContent: {
     paddingTop: spacing.sm,
+    paddingBottom: spacing.md,
   },
   skeletonLine: {
     backgroundColor: colors.skeleton,

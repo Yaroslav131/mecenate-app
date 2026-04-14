@@ -1,6 +1,5 @@
 export const colors = {
   primary: '#7C3AED',
-  primaryLight: '#EDE9FE',
   actionButton: '#6115CD',
   background: '#FFFFFF',
   backgroundSecondary: '#F5F8FD',
@@ -10,19 +9,15 @@ export const colors = {
   text: {
     primary: '#111827',
     secondary: '#6B7280',
-    tertiary: '#9CA3AF',
     inverse: '#FFFFFF',
     comment: '#111416',
     commentsCount: '#68727D',
   },
   like: '#FF2B75',
-  likeBackground: '#FEE2E2',
   overlay: 'rgba(17, 20, 22, 0.45)',
-  success: '#10B981',
-  free: '#10B981',
-  paid: '#F59E0B',
   inputBorder: '#EFF2F7',
   inputPlaceholder: '#A4AAB0',
+  surfaceTransparent: 'rgba(255,255,255,0)',
 } as const;
 
 export const fonts = {
