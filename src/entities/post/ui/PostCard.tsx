@@ -141,6 +141,7 @@ const styles = StyleSheet.create({
   cardDetail: {
     marginTop: spacing.md,
     marginBottom: 0,
+    boxShadow: 'none',
   },
   authorRow: {
     flexDirection: 'row',

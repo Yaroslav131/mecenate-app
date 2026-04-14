@@ -74,17 +74,9 @@ export const radius = {
 
 export const shadows = {
   sm: {
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 1,
+    boxShadow: '0 1 2 rgba(0,0,0,0.05)',
   },
   md: {
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 4,
-    elevation: 3,
+    boxShadow: '0 2 4 rgba(0,0,0,0.08)',
   },
 } as const;
