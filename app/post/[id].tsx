@@ -8,7 +8,6 @@ import {
   Platform,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -23,7 +22,7 @@ import { useToggleLike } from '@/features/like-post/model/useToggleLike';
 import { CommentInput } from '@/features/send-comment/ui/CommentInput';
 import { useSendComment } from '@/features/send-comment/model/useSendComment';
 import { ErrorState } from '@/shared/ui/ErrorState';
-import { colors, fonts, fontSize, fontWeight, lineHeight, radius, spacing } from '@/shared/theme';
+import { colors, fonts, fontSize, lineHeight, radius, spacing } from '@/shared/theme';
 import type { Comment, Post } from '@/shared/types';
 
 interface PostDetailHeaderProps {
@@ -58,27 +57,14 @@ function PostDetailHeader({ post, likesCount, isLiked, commentsTotal, onLike, on
 
 interface CommentsFooterProps {
   isLoading: boolean;
-  hasNextPage: boolean;
   isFetchingNextPage: boolean;
-  onLoadMore: () => void;
 }
 
-function CommentsFooter({ isLoading, hasNextPage, isFetchingNextPage, onLoadMore }: CommentsFooterProps) {
+function CommentsFooter({ isLoading, isFetchingNextPage }: CommentsFooterProps) {
   return (
     <>
-      {isLoading && (
+      {(isLoading || isFetchingNextPage) && (
         <ActivityIndicator color={colors.primary} style={styles.footerLoader} />
-      )}
-      {hasNextPage && !isLoading && (
-        <TouchableOpacity
-          style={styles.loadMoreBtn}
-          onPress={onLoadMore}
-          disabled={isFetchingNextPage}
-        >
-          <Text style={styles.loadMoreText}>
-            {isFetchingNextPage ? 'Загрузка...' : 'Загрузить ещё'}
-          </Text>
-        </TouchableOpacity>
       )}
       <View style={styles.listFooterSpacer} />
     </>
@@ -172,11 +158,13 @@ const PostDetailScreen = observer(() => {
           ListFooterComponent={
             <CommentsFooter
               isLoading={commentsLoading}
-              hasNextPage={!!hasNextPage}
               isFetchingNextPage={isFetchingNextPage}
-              onLoadMore={fetchNextPage}
             />
           }
+          onEndReached={() => {
+            if (hasNextPage && !isFetchingNextPage) fetchNextPage();
+          }}
+          onEndReachedThreshold={0.4}
           showsVerticalScrollIndicator={false}
         />
       </View>
@@ -242,16 +230,6 @@ const styles = StyleSheet.create({
     lineHeight: lineHeight.md,
     color: colors.actionButton,
     fontVariant: ['lining-nums', 'tabular-nums'],
-  },
-  loadMoreBtn: {
-    alignItems: 'center',
-    paddingVertical: spacing.lg,
-  },
-  loadMoreText: {
-    fontFamily: fonts.medium,
-    fontSize: fontSize.sm,
-    color: colors.primary,
-    fontWeight: fontWeight.medium,
   },
   footerLoader: {
     marginVertical: spacing.lg,

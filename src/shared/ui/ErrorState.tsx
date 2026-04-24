@@ -11,7 +11,7 @@ interface ErrorStateProps {
 }
 
 export function ErrorState({
-  title = 'Не удалось загрузить публикацию',
+  title = 'Не удалось загрузить публикации',
   buttonLabel = 'Повторить',
   isLoading,
   onPress,
